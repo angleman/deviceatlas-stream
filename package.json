@@ -1,0 +1,37 @@
+{
+  "name": "deviceatlas-stream",
+  "version": "0.1.0",
+  "description": "Node Device Atlas Stream",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R list test/*.js"
+  },
+  "keywords": [
+    "device",
+    "lookup",
+    "useragent",
+    "wurfl",
+    "stream",
+    "stream2"
+  ],
+  "author": "angleman",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angleman/deviceatlas-stream.git"
+  },
+  "bugs": {
+    "url": "https://github.com/angleman/deviceatlas-stream/issues"
+  },
+  "dependencies": {
+    "readable-stream": "~1.0.26",
+    "deviceatlas": "~0.1.1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-bump": "0.0.13",
+    "license-md": "~0.3.6",
+    "mocha": "~1.17.1",
+    "should": "~3.1.3"
+  }
+}

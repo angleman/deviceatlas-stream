@@ -1,8 +1,8 @@
-var DA      = require('deviceatlas')  // angleman/deviceatlas
-, conflate  = require('conflate') // Munge some objects together, deep by default. kommander/conflate.js
-, util      = require('util')
-, stream    = require('stream').Transform || require('readable-stream').Transform // stream 2 compatible
-, cache     = {}
+var DeviceAtlas = require('deviceatlas')  // angleman/deviceatlas
+, conflate      = require('conflate') // Munge some objects together, deep by default. kommander/conflate.js
+, util          = require('util')
+, stream        = require('stream').Transform || require('readable-stream').Transform // stream 2 compatible
+, cache         = {}
 ;
 
 
@@ -18,7 +18,7 @@ function DeviceAtlasStream(config) {
 
 	config = (config) ? conflate(defaults, config) : defaults;
 
-	maxmind.init(config.dataPath, config);
+	DA = new DeviceAtlas(config);
 
 	stream.call(self, { objectMode: true });
 
@@ -26,20 +26,28 @@ function DeviceAtlasStream(config) {
 		if (data) {
 			var json   = data.toString('utf8');
 			var parsed = JSON.parse(json);
-			var ip = parsed[config.ipField];
-			if (ip) { // ip field found
+			var ua = parsed[config.uaField];
+			if (ua) { // useragent
 				if (config.dropIpField) {
-					delete parsed[config.ipField];
+					delete parsed[config.uaField];
 				}
-				var location = maxmind.getLocation(ip);
-				if (location) {
-					parsed = conflate(parsed, location);
-					data = new Buffer(JSON.stringify(parsed), 'utf8');
-				}
+				DA.device(ua, function(error, properties) {
+					if (properties) {
+						console.log(properties);
+						parsed = conflate(parsed, properties);
+						data = new Buffer(JSON.stringify(parsed), 'utf8');
+					}
+					self.push(data);
+					callback();
+				});
+			} else {
+				self.push(data);
+				callback();
 			}
+		} else {
+			self.push(data);
+			callback();
 		}
-		self.push(data);
-		callback();
 	};
 }
 
